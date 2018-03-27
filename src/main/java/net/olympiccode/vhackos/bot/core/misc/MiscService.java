@@ -42,8 +42,8 @@ public class MiscService implements BotService {
 /*			
                     } else {
                         LOG.info("Failed to collect and restart miner");
-                    }
 */		    
+                    }
                 } else {
                     LOG.warn("MiscService ran but miner was not installed.");
                 }
