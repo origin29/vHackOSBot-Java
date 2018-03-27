@@ -13,6 +13,11 @@ repositories {
     maven { url "https://jitpack.io" }
 }
 
+run{
+    standardInput = System.in
+}
+
+
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile group: 'org.json', name: 'json', version: '20090211'

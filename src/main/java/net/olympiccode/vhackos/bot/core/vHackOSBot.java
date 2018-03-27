@@ -136,7 +136,8 @@ public class vHackOSBot {
                         System.out.println("stats - List all basic stats\n" + "tasks - Lists all active tasks\n" + "brutes - Lists all active bruteforces" + "\nservices - Check the services status\napps - Check app stats\nquit - Exit the bot\nleaders - Check leaderboards");
                         break;
                     case "stats":
-                        System.out.println("Username: " + api.getStats().getUsername() + SEPARATOR + "Money: " + api.getStats().getMoney() + SEPARATOR + "Netcoins: " + api.getStats().getNetcoins() +
+			// MJR
+                        System.out.println("Username: " + api.getStats().getUsername() + SEPARATOR + "Money: " + api.getStats().getMoney()/1000000.0 + "M" + SEPARATOR + "Netcoins: " + api.getStats().getNetcoins() +
                                 "\n" + "Exploits: " + api.getStats().getExploits() + SEPARATOR + "IP: " + api.getStats().getIpAddress() + SEPARATOR + " Running for: " + getRunningTime() + "\n" +
                                 "Level: " + api.getStats().getLevel() + getProgressBar());
                         break;

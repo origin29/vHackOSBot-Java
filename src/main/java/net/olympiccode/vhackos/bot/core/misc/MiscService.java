@@ -37,10 +37,13 @@ public class MiscService implements BotService {
             if (MiscConfigValues.enableMiner) {
                 if (vHackOSBot.api.getAppManager().getApp(AppType.NCMiner).isInstalled()) {
                     if (vHackOSBot.api.getMiner().start()) {
-                        LOG.info("Collected and restarted miner");
+//                        LOG.info("Collected and restarted miner");
+                        LOG.info("COLLECTED netcoins");
+/*			
                     } else {
                         LOG.info("Failed to collect and restart miner");
                     }
+*/		    
                 } else {
                     LOG.warn("MiscService ran but miner was not installed.");
                 }

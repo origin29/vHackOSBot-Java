@@ -25,6 +25,12 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
+import net.olympiccode.vhackos.api.entities.impl.vHackOSAPIImpl;
+import net.olympiccode.vhackos.api.vHackOSAPI;
+import net.olympiccode.vhackos.api.vHackOSAPIBuilder;
+import net.olympiccode.vhackos.api.vHackOSInfo;
+
+
 public class NetworkingService implements BotService {
     public static ScheduledExecutorService networkingService;
     Logger LOG = LoggerFactory.getLogger("NetworkingService");
@@ -60,20 +66,38 @@ public class NetworkingService implements BotService {
             ((ArrayList<BruteForce>)((ArrayList)vHackOSBot.api.getTaskManager().getActiveBrutes()).clone()).forEach(bruteForce -> {
                 if (cache.asMap().containsKey(bruteForce.getIp())) return;
                 if (bruteForce.getState() == BruteForceState.SUCCESS) {
+if (vHackOSBot.api.getStats().getMoney() < 1000000) { // 1M
+LOG.info("FILLUP mybank: " + vHackOSBot.api.getStats().getMoney()/1000000.0 + "M");
+} else {
+//LOG.info("BANKFULL: bruteip: " + bruteForce.getIp() + " - mybank: " + vHackOSBot.api.getStats().getMoney()/1000000.0 + "M");
+//LOG.info("BANKFULL: bruteip: " + bruteForce.getIp());
+return;
+}
                     cache.put(bruteForce.getIp(), "");
                     ExploitedTarget etarget = bruteForce.exploit();
                     ExploitedTarget.Banking banking = etarget.getBanking();
 
                     if (banking.isBruteForced()) {
                         long av = banking.getAvaliableMoney();
-                        if (av > 0 && banking.withdraw(NetworkingConfigValues.withdrawPorcentage)) {
-                            LOG.info("Withdrawed " + av + " of " + banking.getTotal() + " from " + etarget.getIp() + ".");
+//MJR`
+//                        if (av > 0 && banking.withdraw(NetworkingConfigValues.withdrawPorcentage)) {
+			// 1M
+                        if (av > 0 && av > 1000000 && eval(etarget) == false) {
+//&& vHackOSBot.api.getStats().getMoney() < 5000000) { 
+				banking.withdraw(NetworkingConfigValues.withdrawPorcentage);
+//                            LOG.info("WITHDRAW: " + av/1000000. + "M of " + banking.getTotal() + " from " + etarget.getIp() + ".");
+                            LOG.info("WITHDRAW: " + av/1000000. + "M from: " + etarget.getIp());
                         } else {
                             LOG.error("Failed to withdraw from " + etarget.getIp() + ".");
+			    LOG.error("av: " + av/1000000. + "M  - eval: " + eval(etarget) + " - mybank: " + vHackOSBot.api.getStats().getMoney()/1000000 + "M");
                         }
+//LOG.info("Bank info: " + av + " - " + banking.getTotal() + " - " + banking.getSavings() );
                         if (eval(etarget)) {
-                            LOG.info("Removing bruteforce from " + etarget.getIp() + ".");
-                            bruteForce.remove();
+//MJR
+//LOG.info("Would remove");
+//                            LOG.info("Removing bruteforce from " + etarget.getIp() + ".");
+//                            LOG.info("Removing bruteforce from " + etarget.getIp() + ". - " + av + " - " + etarget.getSavings() + " - " + etarget.maxSavings() + " - " + etarget.getTotal());
+                            //bruteForce.remove();
                         }
 
                     } else {
@@ -93,8 +117,9 @@ public class NetworkingService implements BotService {
                             LOG.info("Removing bruteforce from " + bruteForce.getIp() + " has it failed.");
                             bruteForce.remove();
                     }
-                }
-            });
+		}
+	    });
+//	});
             if (vHackOSBot.api.getStats().getExploits() > 0) {
                int success = 0;
                int tries = 6 * 3;
@@ -117,9 +142,12 @@ public class NetworkingService implements BotService {
         final int[] success = {0};
         vHackOSBot.api.getNetworkManager().getTargets().forEach(target -> {
             if (vHackOSBot.api.getStats().getExploits() <= 0) return;
-            if (target.getFirewall() < vHackOSBot.api.getAppManager().getApp(AppType.SDK).getLevel() && !target.isOpen()) {
+// MJR	
+//            if (target.getFirewall() < vHackOSBot.api.getAppManager().getApp(AppType.SDK).getLevel() && !target.isOpen()) {
+LOG.info("fw level: " + target.getFirewall());
+            if (target.getFirewall() < vHackOSBot.api.getAppManager().getApp(AppType.SDK).getLevel() && target.getFirewall() > 100 && !target.isOpen()) {
                 success[0]++;
-                LOG.info("Exploiting " + target.getIp() + "...");
+                //LOG.info("Exploiting " + target.getIp() + "...");
                 try {
                     ExploitedTarget etarget = target.exploit();
                     try {
@@ -127,7 +155,7 @@ public class NetworkingService implements BotService {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    LOG.info("Starting bruteforce on " + target.getIp() + "...");
+                    //LOG.info("Starting bruteforce on " + target.getIp() + "...");
                     if (etarget.getBanking().startBruteForce()) {
                         LOG.info("Started bruteforce on " + target.getIp() + ".");
                     } else {
