@@ -17,6 +17,7 @@ run{
     standardInput = System.in
 }
 
+// SET JAVA_HOME TO java-9-openjdk PATH IF NEEDED!
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
